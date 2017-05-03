@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: ${NAME}
+  name: awassink
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     -  ReadWriteOnce
   nfs:
-    path: /home/kubedrive/${NAME}
+    path: /home/kubedrive/awassink
     server: 10.8.60.182
   persistentVolumeReclaimPolicy: Retain

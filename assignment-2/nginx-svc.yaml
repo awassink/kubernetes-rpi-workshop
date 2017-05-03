@@ -7,9 +7,9 @@ metadata:
   name: nginx
 spec:
   externalIPs:
-  - <your node ip>
+  - <my_node_ip>
   ports:
-  - port: 90
+  - port: <my_portnumber>
     protocol: TCP
     targetPort: 80
   selector:

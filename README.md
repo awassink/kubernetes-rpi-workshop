@@ -90,7 +90,7 @@ Now the container is running with kubernetes, the NGINX application is directly 
 ## Exposing containers on kubernetes
 Now the pod is running, but the application is not generally accessible. That can be achieved by creating a service in kubernetes. The service will have a cluster IP-address assigned, which is the IP-address the service is avalailable at within the cluster (10.0.0.*). Use the IP-address of your a worker node as external IP and the service becomes available outside of the cluster (e.g.10.150.42.103 in my case). Check in your browser that http://<ip-address-of-your-node>:90/ is available.
 ```bash
-$ kubectl expose deployment nginx --port=90 --target-port=80 --external-ip=<my node's ip>
+$ kubectl expose deployment nginx --port=<my port number> --target-port=80 --external-ip=<my node's ip>
 service "nginx" exposed
   
 $ kubectl get svc
@@ -158,7 +158,8 @@ $ kubectl rollout undo deployment/nginx --to-revision=1
 deployment "nginx" rolled back
 ```
 For more details about the deployment rollback functionality, see http://kubernetes.io/docs/user-guide/deployments/#rolling-back-a-deployment.
-Creating services, deployments and pods from configuration files
+
+## Creating services, deployments and pods from configuration files
 Kubernetes resources can also be created from configuration files instead of via the command line. This makes it easy to put this kubernetes configuration in version control and maintain it from there.
 ```bash
 $ kubectl delete svc nginx

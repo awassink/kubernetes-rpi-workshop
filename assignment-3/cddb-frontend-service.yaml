@@ -7,9 +7,9 @@ metadata:
   name: cddb-frontend
 spec:
   externalIPs:
-  - <your node ip>
+  - <my_node_ip>
   ports:
-  - port: 80
+  - port: <my_port_number>
     protocol: TCP
     targetPort: 80
   selector:

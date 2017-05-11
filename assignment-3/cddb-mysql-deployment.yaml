@@ -39,7 +39,7 @@ spec:
             secretKeyRef:
               name: mysql-login
               key: password
-        image: mysql:5.6
+        image: buildserver:5000/rpi-mysql:latest
         imagePullPolicy: IfNotPresent
         name: cddb-mysql
         ports:

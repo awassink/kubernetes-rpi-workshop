@@ -59,7 +59,7 @@ An easy way to test the cluster is by running a simple docker image like the `ng
 Note that your nginx pod may seem to be stuck at "ContainerCreating" because it has to download the image first.
 
 ```bash
-$ kubectl run nginx --image=nginx --port=80 --labels="run=nginx,visualize=true"
+$ kubectl run nginx --image=buildserver:5000/rpi-nginx --port=80 --labels="run=nginx,visualize=true"
 deployment "nginx" created
  
 $ kubectl get pods -o wide
@@ -127,7 +127,7 @@ In order to demonstrate a rolling update, we will use some prepared nginx contai
 $ kubectl delete deployment nginx
 deployment "nginx" deleted
  
-$ kubectl run nginx --image=awassink/nginx-withcontent:3 --port=80 --replicas=4 --labels="run=nginx,visualize=true"
+$ kubectl run nginx --image=buildserver:5000/rpi-nginx-withcontent:3 --port=80 --replicas=4 --labels="run=nginx,visualize=true"
 deployment "nginx" created
 ```
 Now we can see Kubernetes' full magic at work. We will edit the deployment (http://kubernetes.io/docs/user-guide/deployments/#updating-a-deployment) to start using the second version of the image, which will be rolled out by the system, replacing one pod at a time. The service will never go down, during the update a user simply gets served either the old or the new version. To kick the update off, you must edit the deployment. Take note of the different parts of this deployment file. You can write such a file yourself to deploy your applications, which is often more practical than having a bloke or gall hammer commands into a cluster with kubectl. For now, change the container image to version 4. For those unfamiliar with this editor, start editing with insert, stop editing with esc, save the result with :w and quit with :q. Alternatively, you can set the image directly.
@@ -137,7 +137,7 @@ deployment nginx edited
  
 OR
  
-$ kubectl set image deployment/nginx nginx=awassink/nginx-withcontent:4
+$ kubectl set image deployment/nginx nginx=buildserver:5000/rpi-nginx-withcontent:4
 deployment "nginx" image updated
 ```
 Now let's assume that sometimes we inadvertently mess up and deploy a version of our application that is utterly broken. We get that dreaded midnight phonecall that a memory leak is destroying everything we care about, like uptime and service availability and professional pride.

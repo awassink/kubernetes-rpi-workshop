@@ -201,26 +201,38 @@ nginx-3145251729-j9nyl   1/1       Running   0          10m       10.1.47.2   rp
 nginx-3145251729-wwc5j   1/1       Running   0          11s       10.1.31.2   rpi-node-40
 ```
 ## Doing a rolling update with Kubernetes (no service downtime)
-In order to demonstrate a rolling update, we will use some prepared nginx containers which serve different static html depending on the version.  Please remove your current deployment and deploy version 1 of this image, with 4 replicas, exposing port 80 on the pods (tip: if you don't remove the service exposing your raspi's port 90 to the world you can reuse it for this deployment).
+In order to demonstrate a rolling update, we will use some prepared nginx containers which serve different static html depending on the version. 
+Please remove your current deployment and deploy version 1 of this image, with 4 replicas, exposing port 80 on the pods.
+(tip: if you don't remove the service exposing your raspi's port 90 to the world you can reuse it for this deployment).
 ```bash
 $ kubectl delete deployment nginx
 deployment "nginx" deleted
  
-$ kubectl run nginx --image=buildserver:5000/rpi-nginx-withcontent:3 --port=80 --replicas=4 --labels="run=nginx,visualize=true"
+$ kubectl run nginx --image=buildserver:5000/rpi-nginx-withcontent:3 --port=80 --replicas=4 --labels="visualize=true"
 deployment "nginx" created
 ```
-Now we can see Kubernetes' full magic at work. We will edit the deployment (http://kubernetes.io/docs/user-guide/deployments/#updating-a-deployment) to start using the second version of the image, which will be rolled out by the system, replacing one pod at a time. The service will never go down, during the update a user simply gets served either the old or the new version. To kick the update off, you must edit the deployment. Take note of the different parts of this deployment file. You can write such a file yourself to deploy your applications, which is often more practical than having a bloke or gall hammer commands into a cluster with kubectl. For now, change the container image to version 4. For those unfamiliar with this editor, start editing with insert, stop editing with esc, save the result with :w and quit with :q. Alternatively, you can set the image directly.
+Now we can see Kubernetes' full magic at work. 
+We will edit the deployment (http://kubernetes.io/docs/user-guide/deployments/#updating-a-deployment) to start using the second version of the image, which will be rolled out by the system, replacing one pod at a time. 
+The service will never go down, during the update a user simply gets served either the old or the new version. 
+To kick the update off, you must edit the deployment. 
+Take note of the different parts of this deployment file. 
+You can write such a file yourself to deploy your applications, which is often more practical than having a bloke or gall hammer commands into a cluster with `kubectl`. 
+For now, change the container image version from 3 to 4. 
+For those unfamiliar with the vi editor, start editing with `i`, stop editing with `esc`, save the result with `:w` and quit with `:q`. 
+Alternatively, you can set the image directly.
 ```bash
 $ kubectl edit deployment nginx
 deployment nginx edited
- 
+``` 
 OR
- 
+```bash
 $ kubectl set image deployment/nginx nginx=buildserver:5000/rpi-nginx-withcontent:4
 deployment "nginx" image updated
 ```
-Now let's assume that sometimes we inadvertently mess up and deploy a version of our application that is utterly broken. We get that dreaded midnight phonecall that a memory leak is destroying everything we care about, like uptime and service availability and professional pride.
-Thanks to Kubernetes, we can run a single command from our laptop and get back to bed. First we will checkout the rollout history, pick a version to restore and then deploy it before snoring of happily.
+Now let's assume that sometimes we inadvertently mess up and deploy a version of our application that is utterly broken. 
+We get that dreaded midnight phonecall that a memory leak is destroying everything we care about, like uptime and service availability and professional pride.
+Thanks to Kubernetes, we can run a single command from our laptop and get back to bed. 
+First we will checkout the rollout history, pick a version to restore and then deploy it before snoring of happily.
 ```bash
 $ kubectl rollout history deployment/nginx
 deployments "nginx":
@@ -229,8 +241,16 @@ REVISION    CHANGE-CAUSE
 2        <none>
  
 # see details of a specific revision
-$ kubectl rollout history deployment/nginx-deployment --revision=2
-...
+$ kubectl rollout history deployment/nginx --revision=2
+deployments "nginx" revision 2
+  Labels:	pod-template-hash=1844036403
+	visualize=true
+  Containers:
+   nginx:
+    Image:	buildserver:5000/rpi-nginx-withcontent:4
+    Port:	80/TCP
+    Environment Variables:	<none>
+  No volumes.
  
 # execute the rollback
 $ kubectl rollout undo deployment/nginx --to-revision=1
@@ -239,14 +259,18 @@ deployment "nginx" rolled back
 For more details about the deployment rollback functionality, see http://kubernetes.io/docs/user-guide/deployments/#rolling-back-a-deployment.
 
 ## Creating services, deployments and pods from configuration files
-Kubernetes resources can also be created from configuration files instead of via the command line. This makes it easy to put this kubernetes configuration in version control and maintain it from there.
+Kubernetes resources can also be created from configuration files instead of via the command line. 
+This makes it easy to put this kubernetes configuration in version control and maintain it from there.
+First clean up!
 ```bash
 $ kubectl delete svc nginx
 service "nginx" deleted
  
 $ kubectl delete deployment nginx
 deployment "nginx" deleted
- 
+```
+Now go into the 
+```bash
 $ kubectl create -f nginx-deployment.yaml
 replicationcontroller "nginx" created
  
@@ -255,7 +279,7 @@ service "nginx" created
 ```
 Now edit the deployment yaml file to use a different image version (4->3)
 ```bash
-$ kubectl replace -f nginx-deployment.yaml
+$ kubectl apply -f nginx-deployment.yaml
 ```  
 
 ## Deploying a three tier application

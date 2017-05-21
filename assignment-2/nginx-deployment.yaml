@@ -7,9 +7,6 @@ metadata:
   name: nginx
 spec:
   replicas: 4
-  selector:
-    matchLabels:
-      visualize: "true"
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -28,9 +25,6 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      securityContext: {}
       terminationGracePeriodSeconds: 30

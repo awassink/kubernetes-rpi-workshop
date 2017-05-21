@@ -9,10 +9,9 @@ spec:
   externalIPs:
   - <my_node_ip>
   ports:
-  - port: <my_portnumber>
+  - port: 90
     protocol: TCP
     targetPort: 80
   selector:
     run: nginx
-  sessionAffinity: None
   type: ClusterIP

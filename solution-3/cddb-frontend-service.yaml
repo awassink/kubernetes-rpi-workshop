@@ -7,7 +7,7 @@ metadata:
   name: cddb-frontend
 spec:
   externalIPs:
-  - <my_node_ip>
+  - 10.150.42.191
   ports:
   - port: 90
     protocol: TCP

@@ -9,7 +9,7 @@ spec:
   externalIPs:
   - <my_node_ip>
   ports:
-  - port: <my_port_number>
+  - port: 90
     protocol: TCP
     targetPort: 80
   selector:

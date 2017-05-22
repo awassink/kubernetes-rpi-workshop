@@ -9,5 +9,5 @@ spec:
     -  ReadWriteOnce
   nfs:
     path: /home/kubedrive/awassink
-    server: 10.8.60.182
+    server: buildserver
   persistentVolumeReclaimPolicy: Retain

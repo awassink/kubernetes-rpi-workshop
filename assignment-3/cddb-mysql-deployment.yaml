@@ -7,15 +7,10 @@ metadata:
   name: cddb-mysql
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      run: cddb-mysql
-      visualize: "true"
   strategy:
     type: Recreate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         run: cddb-mysql
         visualize: "true"
@@ -32,12 +27,12 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: mysql-login
+              name: mysql-user
               key: user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-login
+              name: mysql-password
               key: password
         image: buildserver:5000/rpi-mysql:latest
         imagePullPolicy: IfNotPresent

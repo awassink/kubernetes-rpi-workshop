@@ -269,7 +269,10 @@ service "nginx" deleted
 $ kubectl delete deployment nginx
 deployment "nginx" deleted
 ```
-Now go into the 
+Now go into the `/root/kubernetes-workshop/assignment-2` directory.
+Here you will find a Yaml config file for both the deployment and the service.
+Have a look into both files and set you node's IP-address in the service config file.
+When working with Yaml this cheatsheet is handy http://cheat.readthedocs.io/en/latest/yaml.html .
 ```bash
 $ kubectl create -f nginx-deployment.yaml
 replicationcontroller "nginx" created
@@ -277,10 +280,12 @@ replicationcontroller "nginx" created
 $ kubectl create -f nginx-svc.yaml
 service "nginx" created
 ```
+Check the deployment by opening it in your browser.
 Now edit the deployment yaml file to use a different image version (4->3)
 ```bash
 $ kubectl apply -f nginx-deployment.yaml
 ```  
+Check the new content is available by refreshing your browser.
 
 ## Deploying a three tier application
 Creating and claiming persisted volumes

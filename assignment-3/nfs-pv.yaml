@@ -8,6 +8,6 @@ spec:
   accessModes:
     - ReadWriteOnce
   nfs:
-    path: /home/kubedrive/<rpi-node-**>
+    path: /home/quintor/nfs-share/<rpi-node-**>
     server: buildserver
   persistentVolumeReclaimPolicy: Retain

@@ -288,12 +288,15 @@ $ kubectl apply -f nginx-deployment.yaml
 Check the new content is available by refreshing your browser.
 
 ## Deploying a three tier application
-Creating and claiming persisted volumes
-The buildserver also hosts NFS service providing multiple volumes for mounting. In Kubernetes you can make a volume available for usage by creating a Persisted Volume.
-Edit the nfs-pv.yaml file so that the nfs share path matches your node. Also change the PV name to a unique value.
+###Creating and claiming persisted volumes
+The buildserver also hosts NFS service providing multiple volumes for mounting. 
+In Kubernetes you can make a volume available for usage by creating a Persisted Volume.
+Edit the nfs-pv.yaml file so that the nfs share path matches your node. 
+Also change the PV name to a unique value.
 ```bash
 $ kubectl create -f nfs-pv.yaml
 persistentvolume "nfs-share-61" created
+
 $ kubectl get pv
 NAME           CAPACITY   ACCESSMODES   STATUS      CLAIM                    REASON    AGE
 nfs-share-61   1Gi        RWO           Available                                      28s

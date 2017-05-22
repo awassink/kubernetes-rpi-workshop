@@ -288,6 +288,15 @@ $ kubectl apply -f nginx-deployment.yaml
 Check the new content is available by refreshing your browser.
 
 ## Deploying a three tier application
+First clean up!
+```bash
+$ kubectl delete svc nginx
+service "nginx" deleted
+ 
+$ kubectl delete deployment nginx
+deployment "nginx" deleted
+```
+Now go into the `/root/kubernetes-workshop/assignment-3` directory.
 ###Creating and claiming persisted volumes
 The buildserver also hosts NFS service providing multiple volumes for mounting. 
 In Kubernetes you can make a volume available for usage by creating a Persisted Volume.
@@ -295,39 +304,44 @@ Edit the nfs-pv.yaml file so that the nfs share path matches your node.
 Also change the PV name to a unique value.
 ```bash
 $ kubectl create -f nfs-pv.yaml
-persistentvolume "nfs-share-61" created
+persistentvolume "rpi-node-40" created
 
 $ kubectl get pv
-NAME           CAPACITY   ACCESSMODES   STATUS      CLAIM                    REASON    AGE
-nfs-share-61   1Gi        RWO           Available                                      28s
+NAME          CAPACITY   ACCESSMODES   STATUS      CLAIM     REASON    AGE
+rpi-node-40   1Gi        RWO           Available                       11s
 ```
-Before the volume can be used it needs to be claimed for a certain application. This is done by creating a Persisted Volume Claim.
+Before the volume can be used it needs to be claimed for a certain application. 
+This is done by creating a Persisted Volume Claim.
 ```bash
 $ kubectl create -f cddb-pvc.yaml
 persistentvolumeclaim "cddb-mysql-pv-claim" created
  
 $ kubectl get pvc
-NAME             STATUS    VOLUME         CAPACITY   ACCESSMODES   AGE
-mysql-pv-claim   Bound     nfs-share-61   1Gi        RWO           12s
+NAME                  STATUS    VOLUME        CAPACITY   ACCESSMODES   AGE
+cddb-mysql-pv-claim   Bound     rpi-node-40   1Gi        RWO           25s
+
 $ kubectl get pv
-NAME           CAPACITY   ACCESSMODES   STATUS    CLAIM                        REASON    AGE
-nfs-share-61   1Gi        RWO           Bound     rpi-node-61/mysql-pv-claim             5m
+NAME          CAPACITY   ACCESSMODES   STATUS    CLAIM                             REASON    AGE
+rpi-node-40   1Gi        RWO           Bound     rpi-node-40/cddb-mysql-pv-claim             1m
 ```
 More information can be found here: http://kubernetes.io/docs/user-guide/persistent-volumes/
 
-Some of the deployment and service yaml files in the "assignment-3" folder are incomplete. Open the files and lookup the missing values in the Kubernetes documentation http://kubernetes.io/docs/.
+Some of the deployment and service yaml files in the "assignment-3" folder are incomplete. 
+Open the files and lookup the missing values in the Kubernetes documentation http://kubernetes.io/docs/.
 
-For the MySQL service, set an appropriate service type. Take some time to look at http://kubernetes.io/docs/user-guide/services/#publishing-services---service-types because services and their types are some of the most powerful and most important Kubernetes features.
+For the MySQL service, set an appropriate service type. 
+Take some time to look at http://kubernetes.io/docs/user-guide/services/#publishing-services---service-types because services and their types are some of the most powerful and most important Kubernetes features.
 
-For the MySQL deployment, create Kubernetes secrets. Take a look at http://kubernetes.io/docs/user-guide/secrets/#creating-a-secret-using-kubectl-create-secret for more info. The MySQL root `password` is `root_pw`, the MySQL `user` is called `cddb_quintor` and the MySQL `password` is `quintor_pw`. You can create secrets from the command line using:
-`kubectl create secret generic --from-literal=<field name>=<field value> <secret name>`
+For the MySQL deployment, create Kubernetes secrets. 
+Take a look at http://kubernetes.io/docs/user-guide/secrets/#creating-a-secret-using-kubectl-create-secret for more info. 
+The MySQL root `password` is `root_pw`, the MySQL `user` is called `cddb_quintor` and the MySQL `password` is `quintor_pw`. 
+You can create secrets from the command line using: `kubectl create secret generic --from-literal=<field name>=<field value> <secret name>`
+So for example: `kubectl create secret generic --from-literal=password=root_pw mysql-root-password`
 
-so for example
-
-`kubectl create secret generic --from-literal=password=root_pw mysql-root-password`
-
-Choose a rollout strategy for the frontend deployment containers. Take a look at http://kubernetes.io/docs/user-guide/deployments/#strategy. It is not necessary to set the maxUnavailable and maxSurge fields but you can of course experiment with these values if you like.
-For all three services (frontend, backend and MySQL), edit the *-service.yaml files and set the IP of your own node before creating them.
+Choose a rollout strategy for the frontend deployment containers. 
+Take a look at http://kubernetes.io/docs/user-guide/deployments/#strategy. 
+It is not necessary to set the maxUnavailable and maxSurge fields but you can of course experiment with these values if you like.
+Edit the cddb-frontend-service.yaml file and set the IP-address of your own node before creating them.
 Now you can build the application from the ground up to the higher layers. Create the services and deployments for MySQL, backend and frontend:
  
 ```bash
@@ -350,4 +364,7 @@ $ kubectl create -f cddb-frontend-service.yaml
 service "cddb-frontend" created
 ```
 Test that the application is working using a browser and that it stores the data in the database. 
-You can scale up the frontend and backend layer. But the mysql layer cannot be scaled. Though Kubernetes manages the persisted volumes and remounts them on a different node when needed. To test this find out on which node the mysql pod is running and kill the docker container on that node and look what happens.
+You can scale up the frontend and backend layer. 
+But the mysql layer cannot be scaled. 
+Though Kubernetes manages the persisted volumes and remounts them on a different node when needed. 
+To test this find out on which node the mysql pod is running and kill the docker container on that node and look what happens.
